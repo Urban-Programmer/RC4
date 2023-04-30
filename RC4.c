@@ -16,15 +16,6 @@
 */
 
 
-//Global Vars
-// char *crypt;
-// char *salt;
-// char *input_path;
-// char *output_path;
-// char *key;
-
-
-
 
 void decrypt(const unsigned char *input_path, const char *output_path, const char *key){
     FILE* outfile = fopen(output_path, "wb");
@@ -60,32 +51,6 @@ void decrypt(const unsigned char *input_path, const char *output_path, const cha
 
 
 }
-
-char byteEncrypt(char* output_path){
-    unsigned char key[] = "mysecretkey";
-    unsigned char plaintext[] = "Hello World!";
-    unsigned char cipher[sizeof(plaintext)];
-
-    int key_len = strlen(key);
-    int plaintext_len = strlen(plaintext);
-
-    //RC4 Key creation
-    RC4_KEY rc4_key;
-    RC4_set_key(&rc4_key, key_len, key);
-
-    // Cipher Text
-    RC4(&rc4_key, plaintext_len, plaintext, cipher);
-
-    printf("Encrypted data: ");
-    for (int i = 0; i < plaintext_len; i++) {
-        printf("%02x", cipher[i]);
-    }
-    printf("\n");
-    printf("Decrypted data: %s\n", plaintext);
-
-}
-
-
 
 // char *input_path, char *output_path, char* salt, char* key
 void encrypt (const char* output_path, const char* input_path, const char* key){
@@ -128,8 +93,6 @@ void encrypt (const char* output_path, const char* input_path, const char* key){
 
 }
 
-
-
 int main(int argc, char *argv[]) {
 
     // Test Script:
@@ -138,33 +101,40 @@ int main(int argc, char *argv[]) {
 
     //Variable Assignment
     char *crypt = argv[1];
-    char *salt = argv[2];
+    char *key = argv[2];
     char *input_path = argv[3];
     char *output_path = argv[4];
-    char *key = argv[5];
-    
-
-    //Above Variables will require error checking @ some point in time
-    FILE *output_file = fopen(output_path,"w");
-
-    //instead this should encrypt the file
-    char* test = "heyo!";
+    char *salt = argv[5];
 
 
-    //
-    fwrite(test, 1, strlen(test), output_file);
-    fclose(output_file);
+    //Print off Vars for user
+    printf("Key = %s \nInput File = %s \nOutput File = %s \n", key, input_path, output_path );
 
+    if (salt == NULL){
+        printf("Salt Option was not selected");
+    }
+    else {
+        printf("Salting...");
+    }
 
-    //Encrypt Byte
+    //Checks if Decrypt or Encrypt
+    if (strcmp(argv[1], "-d") == 0) {
+    // Decrypt mode
+    printf("\nDecrypting...\n");
 
-    //encrypt(output_path, input_path, key);
     decrypt(input_path, output_path, key);
 
+    } else if (strcmp(argv[1], "-e") == 0) {
+    // Encrypt mode
+    printf("Encrypting...\n");
+    encrypt(output_path, input_path, key);
 
+    } else {
+        printf("Invalid option: %s\n", argv[1]);
+        exit(1);
+    }
+  
 
-    
-    printf("Arg: %d\n", argc);
 
 
     exit(0);
